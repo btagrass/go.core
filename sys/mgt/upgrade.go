@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"path/filepath"
 
+	"github.com/btagrass/go.core/sys/svc"
 	"github.com/gin-gonic/gin"
-	"go.core/sys/svc"
 )
 
 // @summary 升级

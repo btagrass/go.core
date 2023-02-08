@@ -1,15 +1,15 @@
 package svc
 
 import (
+	"github.com/btagrass/go.core/svc"
+	"github.com/btagrass/go.core/sys/mdl"
+	"github.com/btagrass/go.core/sys/svc/dept"
+	"github.com/btagrass/go.core/sys/svc/dict"
+	"github.com/btagrass/go.core/sys/svc/resource"
+	"github.com/btagrass/go.core/sys/svc/role"
+	"github.com/btagrass/go.core/sys/svc/upgrade"
+	"github.com/btagrass/go.core/sys/svc/user"
 	"github.com/sirupsen/logrus"
-	"go.core/svc"
-	"go.core/sys/mdl"
-	"go.core/sys/svc/dept"
-	"go.core/sys/svc/dict"
-	"go.core/sys/svc/resource"
-	"go.core/sys/svc/role"
-	"go.core/sys/svc/upgrade"
-	"go.core/sys/svc/user"
 )
 
 var (

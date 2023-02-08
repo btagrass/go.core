@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/btagrass/go.core/utl"
 	"github.com/spf13/cobra"
-	"go.core/utl"
 )
 
 var (

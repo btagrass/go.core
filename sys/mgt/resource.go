@@ -1,12 +1,12 @@
 package mgt
 
 import (
+	"github.com/btagrass/go.core/r"
+	"github.com/btagrass/go.core/sys/mdl"
+	"github.com/btagrass/go.core/sys/svc"
+	"github.com/btagrass/go.core/utl"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/cast"
-	"go.core/r"
-	"go.core/sys/mdl"
-	"go.core/sys/svc"
-	"go.core/utl"
 )
 
 // @summary 获取资源

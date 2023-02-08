@@ -1,6 +1,6 @@
 package mdl
 
-import "go.core/mdl"
+import "github.com/btagrass/go.core/mdl"
 
 // 字典
 type Dict struct {

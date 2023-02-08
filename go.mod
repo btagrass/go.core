@@ -1,4 +1,4 @@
-module go.core
+module github.com/btagrass/go.core
 
 go 1.20
 

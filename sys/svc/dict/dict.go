@@ -1,8 +1,8 @@
 package dict
 
 import (
-	"go.core/svc"
-	"go.core/sys/mdl"
+	"github.com/btagrass/go.core/svc"
+	"github.com/btagrass/go.core/sys/mdl"
 )
 
 // 字典服务

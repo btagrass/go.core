@@ -7,14 +7,14 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/btagrass/go.core/cmw"
+	"github.com/btagrass/go.core/sys/svc"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/pprof"
 	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 	swaggerFiles "github.com/swaggo/files"
 	swagger "github.com/swaggo/gin-swagger"
-	"go.core/cmw"
-	"go.core/sys/svc"
 )
 
 // 管理

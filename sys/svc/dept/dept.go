@@ -1,9 +1,9 @@
 package dept
 
 import (
+	"github.com/btagrass/go.core/svc"
+	"github.com/btagrass/go.core/sys/mdl"
 	"github.com/spf13/cast"
-	"go.core/svc"
-	"go.core/sys/mdl"
 	"gorm.io/gorm"
 )
 

@@ -6,9 +6,9 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/btagrass/go.core/app"
+	"github.com/btagrass/go.core/utl"
 	"github.com/spf13/cobra"
-	"go.core/app"
-	"go.core/utl"
 )
 
 var (

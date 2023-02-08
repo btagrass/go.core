@@ -1,10 +1,10 @@
 package resource
 
 import (
+	"github.com/btagrass/go.core/svc"
+	"github.com/btagrass/go.core/sys/mdl"
+	"github.com/btagrass/go.core/sys/svc/user"
 	"github.com/spf13/cast"
-	"go.core/svc"
-	"go.core/sys/mdl"
-	"go.core/sys/svc/user"
 	"gorm.io/gorm"
 )
 

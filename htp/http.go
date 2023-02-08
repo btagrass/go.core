@@ -8,12 +8,12 @@ import (
 	"strings"
 	"time"
 
+	_ "github.com/btagrass/go.core/app"
+	"github.com/btagrass/go.core/utl"
 	"github.com/go-resty/resty/v2"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
 	"github.com/spf13/viper"
-	_ "go.core/app"
-	"go.core/utl"
 )
 
 var (

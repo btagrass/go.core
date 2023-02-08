@@ -1,6 +1,6 @@
 package mdl
 
-import "go.core/mdl"
+import "github.com/btagrass/go.core/mdl"
 
 // 用户
 type User struct {
