@@ -4,7 +4,7 @@ import "github.com/btagrass/go.core/mdl"
 
 // 用户
 type User struct {
-	mdl.Model
+	mdl.Mdl
 	DeptId   int64  `gorm:"not null;comment:部门编码" json:"deptId"`                      // 部门编码
 	UserName string `gorm:"uniqueIndex;size:20;not null;comment:用户名" json:"userName"` // 用户名
 	FullName string `gorm:"size:20;comment:姓名" json:"fullName"`                       // 姓名
@@ -15,6 +15,6 @@ type User struct {
 	Dept     *Dept  `json:"dept"`                                                     // 部门
 }
 
-func (User) TableName() string {
+func (m User) TableName() string {
 	return "sys_user"
 }

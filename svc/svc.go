@@ -13,6 +13,7 @@ import (
 
 	"github.com/btagrass/go.core/app"
 	"github.com/btagrass/go.core/dao"
+	"github.com/btagrass/go.core/mdl"
 	"github.com/btagrass/go.core/utl"
 	"github.com/glebarez/sqlite"
 	"github.com/go-redis/redis/v8"
@@ -110,11 +111,11 @@ func init() {
 }
 
 // 迁移
-func Migrate(models []any, sqls ...string) error {
+func Migrate(mdls []any, sqls ...string) error {
 	if db == nil {
 		return nil
 	}
-	err := db.AutoMigrate(models...)
+	err := db.AutoMigrate(mdls...)
 	if err != nil {
 		return err
 	}
@@ -129,7 +130,7 @@ func Migrate(models []any, sqls ...string) error {
 }
 
 // 服务
-type Svc[M any] struct {
+type Svc[M mdl.IMdl] struct {
 	*dao.Dao[M]
 	Cache  *cache.Cache  // 缓存
 	Redis  *redis.Client // Redis
@@ -137,7 +138,7 @@ type Svc[M any] struct {
 }
 
 // 构造函数
-func NewSvc[M any](prefix string) *Svc[M] {
+func NewSvc[M mdl.IMdl](prefix string) *Svc[M] {
 	return &Svc[M]{
 		Cache:  cch,
 		Redis:  rds,
@@ -166,12 +167,12 @@ func (s *Svc[M]) GetAndCache(id int64, expiration time.Duration) (*M, error) {
 }
 
 // 获取集合并缓存
-func (s *Svc[M]) ListAndCache(expiration time.Duration, conds ...any) ([]*M, error) {
-	var ms []*M
+func (s *Svc[M]) ListAndCache(expiration time.Duration, conds ...any) ([]M, error) {
+	var ms []M
 	key := fmt.Sprintf("%s:%v", s.Prefix, conds)
 	v, ok := s.Cache.Get(key)
 	if ok {
-		ms = v.([]*M)
+		ms = v.([]M)
 	} else {
 		var err error
 		ms, err = s.List(conds)
@@ -204,8 +205,8 @@ func (s *Svc[M]) GetAndRedis(id int64, expiration time.Duration) (*M, error) {
 }
 
 // 获取集合并Redis
-func (s *Svc[M]) ListAndRedis(expiration time.Duration, conds ...any) ([]*M, error) {
-	var ms []*M
+func (s *Svc[M]) ListAndRedis(expiration time.Duration, conds ...any) ([]M, error) {
+	var ms []M
 	key := fmt.Sprintf("%s:%v", s.Prefix, conds)
 	err := s.Redis.Get(context.Background(), key).Scan(&ms)
 	if err != nil {

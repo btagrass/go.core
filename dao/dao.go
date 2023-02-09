@@ -4,6 +4,7 @@ import (
 	"errors"
 	"strings"
 
+	"github.com/btagrass/go.core/mdl"
 	"github.com/btagrass/go.core/utl"
 	"github.com/spf13/cast"
 	"gorm.io/gorm"
@@ -11,12 +12,12 @@ import (
 )
 
 // 数据访问对象
-type Dao[M any] struct {
+type Dao[M mdl.IMdl] struct {
 	Db *gorm.DB
 }
 
 // 构造函数
-func NewDao[M any](db *gorm.DB) *Dao[M] {
+func NewDao[M mdl.IMdl](db *gorm.DB) *Dao[M] {
 	return &Dao[M]{
 		Db: db,
 	}
@@ -24,7 +25,7 @@ func NewDao[M any](db *gorm.DB) *Dao[M] {
 
 // 获取
 func (d *Dao[M]) Get(conds ...any) (*M, error) {
-	var m *M
+	var m M
 	err := d.Db.First(&m, conds...).Error
 	if err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
@@ -34,12 +35,12 @@ func (d *Dao[M]) Get(conds ...any) (*M, error) {
 		}
 	}
 
-	return m, nil
+	return &m, nil
 }
 
 // 获取集合
-func (d *Dao[M]) List(conds ...any) ([]*M, error) {
-	var ms []*M
+func (d *Dao[M]) List(conds ...any) ([]M, error) {
+	var ms []M
 	db := d.Db
 	if len(conds) > 0 {
 		index := 0
@@ -64,8 +65,8 @@ func (d *Dao[M]) List(conds ...any) ([]*M, error) {
 }
 
 // 分页集合
-func (d *Dao[M]) Page(conds ...any) ([]*M, int64, error) {
-	var ms []*M
+func (d *Dao[M]) Page(conds ...any) ([]M, int64, error) {
+	var ms []M
 	var count int64
 	db := d.Db
 	if len(conds) > 0 {
@@ -111,7 +112,7 @@ func (d *Dao[M]) Remove(conds ...any) error {
 }
 
 // 保存
-func (d *Dao[M]) Save(m *M, clauses ...clause.Expression) error {
+func (d *Dao[M]) Save(m M, clauses ...clause.Expression) error {
 	if len(clauses) == 0 {
 		clauses = []clause.Expression{
 			clause.OnConflict{
@@ -119,7 +120,7 @@ func (d *Dao[M]) Save(m *M, clauses ...clause.Expression) error {
 			},
 		}
 	}
-	err := d.Db.Clauses(clauses...).Create(m).Error
+	err := d.Db.Clauses(clauses...).Create(&m).Error
 
 	return err
 }
@@ -141,8 +142,8 @@ func (d *Dao[M]) Trans(funcs ...func(tx *gorm.DB) error) error {
 }
 
 // 更新
-func (d *Dao[M]) Update(m *M, values map[string]any) error {
-	err := d.Db.Model(m).Updates(values).Error
+func (d *Dao[M]) Update(m M, values map[string]any) error {
+	err := d.Db.Model(&m).Updates(values).Error
 
 	return err
 }

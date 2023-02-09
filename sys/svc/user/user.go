@@ -99,7 +99,7 @@ func (u *UserSvc) RemoveUsers(ids []string) error {
 }
 
 // 保存用户角色集合
-func (u *UserSvc) SaveUser(user *mdl.User) error {
+func (u *UserSvc) SaveUser(user mdl.User) error {
 	if len(user.Password) != 60 {
 		password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 		if err != nil {

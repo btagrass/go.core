@@ -3,7 +3,7 @@ module github.com/btagrass/go.core
 go 1.20
 
 require (
-	github.com/casbin/casbin/v2 v2.61.0
+	github.com/casbin/casbin/v2 v2.61.1
 	github.com/casbin/gorm-adapter/v3 v3.14.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/pprof v1.4.0
@@ -22,15 +22,15 @@ require (
 	github.com/swaggo/gin-swagger v1.5.3
 	github.com/u2takey/ffmpeg-go v0.4.1
 	github.com/yitter/idgenerator-go v1.3.2
-	golang.org/x/crypto v0.5.0
-	gorm.io/driver/mysql v1.4.5
+	golang.org/x/crypto v0.6.0
+	gorm.io/driver/mysql v1.4.6
 	gorm.io/gorm v1.24.5
 )
 
 require (
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/aws/aws-sdk-go v1.44.194 // indirect
+	github.com/aws/aws-sdk-go v1.44.197 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect
@@ -82,15 +82,15 @@ require (
 	github.com/swaggo/swag v1.8.10 // indirect
 	github.com/u2takey/go-utils v0.3.1 // indirect
 	github.com/ugorji/go/codec v1.2.9 // indirect
-	golang.org/x/net v0.5.0 // indirect
-	golang.org/x/sys v0.4.0 // indirect
-	golang.org/x/text v0.6.0 // indirect
+	golang.org/x/net v0.6.0 // indirect
+	golang.org/x/sys v0.5.0 // indirect
+	golang.org/x/text v0.7.0 // indirect
 	golang.org/x/tools v0.5.0 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-	gorm.io/driver/postgres v1.4.6 // indirect
+	gorm.io/driver/postgres v1.4.7 // indirect
 	gorm.io/driver/sqlserver v1.4.2 // indirect
 	gorm.io/plugin/dbresolver v1.4.1 // indirect
 	modernc.org/libc v1.22.2 // indirect

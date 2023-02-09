@@ -4,7 +4,7 @@ import "github.com/btagrass/go.core/mdl"
 
 // 部门
 type Dept struct {
-	mdl.Model
+	mdl.Mdl
 	ParentId int64   `gorm:"comment:父编码" json:"parentId"`             // 父编码
 	Name     string  `gorm:"size:50;not null;comment:名称" json:"name"` // 名称
 	Phone    string  `gorm:"size:50;comment:电话" json:"phone"`         // 电话
@@ -13,6 +13,6 @@ type Dept struct {
 	Children []*Dept `gorm:"foreignKey:ParentId" json:"children"`     // 子部门集合
 }
 
-func (Dept) TableName() string {
+func (m Dept) TableName() string {
 	return "sys_dept"
 }

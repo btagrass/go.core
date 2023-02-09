@@ -43,7 +43,7 @@ func RemoveDepts(c *gin.Context) {
 // @success 200 {object} bool
 // @router /mgt/sys/depts [post]
 func SaveDept(c *gin.Context) {
-	var dept *mdl.Dept
+	var dept mdl.Dept
 	err := c.ShouldBind(&dept)
 	if err == nil {
 		err = svc.DeptSvc.Save(dept)

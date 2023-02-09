@@ -57,7 +57,7 @@ func RemoveRoles(c *gin.Context) {
 // @success 200 {object} bool
 // @router /mgt/sys/roles [post]
 func SaveRole(c *gin.Context) {
-	var role *mdl.Role
+	var role mdl.Role
 	err := c.ShouldBind(&role)
 	if err == nil {
 		err = svc.RoleSvc.Save(role)

@@ -67,7 +67,7 @@ func RemoveResources(c *gin.Context) {
 // @success 200 {object} bool
 // @router /mgt/sys/resources [post]
 func SaveResource(c *gin.Context) {
-	var resource *mdl.Resource
+	var resource mdl.Resource
 	err := c.ShouldBind(&resource)
 	if err == nil {
 		err = svc.ResourceSvc.Save(resource)

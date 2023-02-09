@@ -57,7 +57,7 @@ func RemoveUsers(c *gin.Context) {
 // @success 200 {object} bool
 // @router /mgt/sys/users [post]
 func SaveUser(c *gin.Context) {
-	var user *mdl.User
+	var user mdl.User
 	err := c.ShouldBind(&user)
 	if err == nil {
 		err = svc.UserSvc.SaveUser(user)

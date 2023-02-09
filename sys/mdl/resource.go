@@ -4,7 +4,7 @@ import "github.com/btagrass/go.core/mdl"
 
 // 资源
 type Resource struct {
-	mdl.Model
+	mdl.Mdl
 	ParentId int64       `gorm:"comment:父编码" json:"parentId"`             // 父编码
 	Code     string      `gorm:"size:20;not null;comment:代码" json:"code"` // 代码
 	Name     string      `gorm:"size:50;not null;comment:名称" json:"name"` // 名称
@@ -16,6 +16,6 @@ type Resource struct {
 	Children []*Resource `gorm:"foreignKey:ParentId" json:"children"`     // 子资源集合
 }
 
-func (Resource) TableName() string {
+func (m Resource) TableName() string {
 	return "sys_resource"
 }

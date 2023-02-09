@@ -45,7 +45,7 @@ func RemoveDicts(c *gin.Context) {
 // @success 200 {object} bool
 // @router /mgt/sys/dicts [post]
 func SaveDict(c *gin.Context) {
-	var dict *mdl.Dict
+	var dict mdl.Dict
 	err := c.ShouldBind(&dict)
 	if err == nil {
 		err = svc.DictSvc.Save(dict)
