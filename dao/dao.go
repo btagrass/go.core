@@ -93,10 +93,10 @@ func (d *Dao[M]) Page(conds ...any) ([]M, int64, error) {
 			length--
 		}
 		if index < length {
-			db = db.Where(conds[index], conds[index+1:length]...)
+			db = db.Where(conds[index], conds[index+1:length]...).Count(&count)
 		}
 	}
-	err := db.Find(&ms).Count(&count).Error
+	err := db.Find(&ms).Limit(-1).Offset(-1).Count(&count).Error
 	if err != nil {
 		return ms, count, err
 	}
