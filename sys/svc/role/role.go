@@ -22,9 +22,9 @@ func NewRoleSvc(userSvc *user.UserSvc) *RoleSvc {
 }
 
 // 获取角色资源集合
-func (r *RoleSvc) ListRoleResources(id int64) ([]int64, error) {
+func (s *RoleSvc) ListRoleResources(id int64) ([]int64, error) {
 	var resources []int64
-	permissions := r.userSvc.Perm.GetPermissionsForUser(cast.ToString(id))
+	permissions := s.userSvc.Perm.GetPermissionsForUser(cast.ToString(id))
 	for _, p := range permissions {
 		resources = append(resources, cast.ToInt64(p[3]))
 	}
@@ -33,8 +33,8 @@ func (r *RoleSvc) ListRoleResources(id int64) ([]int64, error) {
 }
 
 // 保存角色资源集合
-func (r *RoleSvc) SaveRoleResources(id int64, resources []mdl.Resource) error {
-	_, err := r.userSvc.Perm.DeletePermissionsForUser(cast.ToString(id))
+func (s *RoleSvc) SaveRoleResources(id int64, resources []mdl.Resource) error {
+	_, err := s.userSvc.Perm.DeletePermissionsForUser(cast.ToString(id))
 	if err != nil {
 		return err
 	}
@@ -47,7 +47,7 @@ func (r *RoleSvc) SaveRoleResources(id int64, resources []mdl.Resource) error {
 			cast.ToString(res.Type),
 		})
 	}
-	_, err = r.userSvc.Perm.AddPermissionsForUser(cast.ToString(id), rs...)
+	_, err = s.userSvc.Perm.AddPermissionsForUser(cast.ToString(id), rs...)
 	if err != nil {
 		return err
 	}

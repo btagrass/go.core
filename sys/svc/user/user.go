@@ -24,7 +24,7 @@ type UserSvc struct {
 
 // 构造函数
 func NewUserSvc() *UserSvc {
-	userSvc := &UserSvc{
+	s := &UserSvc{
 		Svc:       svc.NewSvc[mdl.User]("sys:users"),
 		SignedKey: []byte("kskj"),
 	}
@@ -34,7 +34,7 @@ func NewUserSvc() *UserSvc {
 	model.AddDef("g", "g", "_, _")
 	model.AddDef("e", "e", "some(where (p.eft == allow))")
 	model.AddDef("m", "m", "r.sub == '300000000000001' || regexMatch(r.obj, '/sys/resources/menu') || g(r.sub, p.sub) && regexMatch(r.obj, p.obj) && regexMatch(r.act, p.act) && p.type == '2'")
-	adapter, err := gormadapter.NewAdapterByDB(userSvc.Db)
+	adapter, err := gormadapter.NewAdapterByDB(s.Db)
 	if err != nil {
 		logrus.Fatal(err)
 	}
@@ -46,15 +46,15 @@ func NewUserSvc() *UserSvc {
 	if err != nil {
 		logrus.Fatal(err)
 	}
-	userSvc.Perm = perm
+	s.Perm = perm
 
-	return userSvc
+	return s
 }
 
 // 获取用户角色集合
-func (u *UserSvc) ListUserRoles(id string) ([]int64, error) {
+func (s *UserSvc) ListUserRoles(id string) ([]int64, error) {
 	roles := []int64{}
-	rs, err := u.Perm.GetRolesForUser(id)
+	rs, err := s.Perm.GetRolesForUser(id)
 	if err != nil {
 		return roles, err
 	}
@@ -66,9 +66,9 @@ func (u *UserSvc) ListUserRoles(id string) ([]int64, error) {
 }
 
 // 登录
-func (u *UserSvc) Login(userName, password string) (*mdl.User, error) {
+func (s *UserSvc) Login(userName, password string) (*mdl.User, error) {
 	var user *mdl.User
-	err := u.Db.Select("id, user_name, password, frozen").First(&user, "user_name = ?", userName).Error
+	err := s.Db.Select("id, user_name, password, frozen").First(&user, "user_name = ?", userName).Error
 	if err != nil {
 		return nil, fmt.Errorf("用户名或密码错误")
 	}
@@ -88,18 +88,39 @@ func (u *UserSvc) Login(userName, password string) (*mdl.User, error) {
 		},
 	)
 	user.Password = ""
-	user.Token, _ = token.SignedString(u.SignedKey)
+	user.Token, _ = token.SignedString(s.SignedKey)
 
 	return user, nil
 }
 
+// 分页用户集合
+func (s *UserSvc) PageUsers(conds map[string]any) ([]mdl.User, int64, error) {
+	var users []mdl.User
+	var count int64
+	current := cast.ToInt(conds["current"])
+	size := cast.ToInt(conds["size"])
+	delete(conds, "current")
+	delete(conds, "size")
+	err := s.Db.
+		Joins("Dept").
+		Limit(size).
+		Offset(size*(current-1)).
+		Find(&users, conds).
+		Count(&count).Error
+	if err != nil {
+		return users, count, err
+	}
+
+	return users, count, nil
+}
+
 // 移除用户集合
-func (u *UserSvc) RemoveUsers(ids []string) error {
-	return u.Remove("id != 1 and id in ?", ids)
+func (s *UserSvc) RemoveUsers(ids []string) error {
+	return s.Remove("id != 300000000000001 and id in ?", ids)
 }
 
 // 保存用户角色集合
-func (u *UserSvc) SaveUser(user mdl.User) error {
+func (s *UserSvc) SaveUser(user mdl.User) error {
 	if len(user.Password) != 60 {
 		password, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 		if err != nil {
@@ -107,18 +128,18 @@ func (u *UserSvc) SaveUser(user mdl.User) error {
 		}
 		user.Password = string(password)
 	}
-	err := u.Save(user)
+	err := s.Save(user)
 
 	return err
 }
 
 // 保存用户角色集合
-func (u *UserSvc) SaveUserRoles(id string, roles []int64) error {
-	_, err := u.Perm.DeleteRolesForUser(id)
+func (s *UserSvc) SaveUserRoles(id string, roles []int64) error {
+	_, err := s.Perm.DeleteRolesForUser(id)
 	if err != nil {
 		return err
 	}
-	_, err = u.Perm.AddRolesForUser(cast.ToString(id), cast.ToStringSlice(roles))
+	_, err = s.Perm.AddRolesForUser(cast.ToString(id), cast.ToStringSlice(roles))
 
 	return err
 }

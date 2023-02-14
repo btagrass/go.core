@@ -20,22 +20,27 @@ func NewDeptSvc() *DeptSvc {
 }
 
 // 分页部门集合
-func (d *DeptSvc) PageDepts(conds map[string]any) ([]mdl.Dept, int64, error) {
+func (s *DeptSvc) PageDepts(conds map[string]any) ([]mdl.Dept, int64, error) {
 	var depts []mdl.Dept
 	var count int64
-	size := cast.ToInt(conds["size"])
 	current := cast.ToInt(conds["current"])
-	delete(conds, "size")
+	size := cast.ToInt(conds["size"])
 	delete(conds, "current")
-	err := d.Db.
+	delete(conds, "size")
+	err := s.Db.
 		Preload("Children", func(db *gorm.DB) *gorm.DB {
 			return db.Order("sequence")
 		}).
-		Where("parent_id = 0 or parent_id is null").
+		Preload("Children.Children", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sequence")
+		}).
 		Limit(size).
 		Offset(size*(current-1)).
-		Find(&depts, conds).
+		Where("parent_id = 0 or parent_id is null").
 		Order("sequence").
+		Find(&depts, conds).
+		Limit(-1).
+		Offset(-1).
 		Count(&count).Error
 	if err != nil {
 		return depts, count, err

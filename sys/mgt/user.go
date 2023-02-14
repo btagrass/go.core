@@ -37,7 +37,7 @@ func ListUserRoles(c *gin.Context) {
 // @success 200 {object} []mdl.User
 // @router /mgt/sys/users [get]
 func PageUsers(c *gin.Context) {
-	users, count, err := svc.UserSvc.Page(r.Q(c))
+	users, count, err := svc.UserSvc.PageUsers(r.Q(c))
 	r.J(c, users, count, err)
 }
 

@@ -2,6 +2,7 @@ package dao
 
 import (
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/btagrass/go.core/mdl"
@@ -40,34 +41,13 @@ func (d *Dao[M]) Get(conds ...any) (*M, error) {
 
 // 获取集合
 func (d *Dao[M]) List(conds ...any) ([]M, error) {
-	var ms []M
-	db := d.Db
-	if len(conds) > 0 {
-		index := 0
-		length := len(conds)
-		cond, ok := conds[index].(map[string]any)
-		if ok {
-			db = db.Where(cond)
-			index++
-		}
-		order, ok := conds[length-1].(string)
-		if ok && strings.Contains(order, "order by ") {
-			db = db.Order(utl.Replace(order, "order by ", ""))
-			length--
-		}
-		if index < length {
-			db = db.Where(conds[index], conds[index+1:length]...)
-		}
-	}
-	err := db.Find(&ms).Error
+	ms, _, err := d.Page(conds...)
 
 	return ms, err
 }
 
-// 分页集合
-func (d *Dao[M]) Page(conds ...any) ([]M, int64, error) {
-	var ms []M
-	var count int64
+// 组装
+func (d *Dao[M]) Make(conds ...any) *gorm.DB {
 	db := d.Db
 	if len(conds) > 0 {
 		index := 0
@@ -84,7 +64,21 @@ func (d *Dao[M]) Page(conds ...any) ([]M, int64, error) {
 				db = db.Offset(cast.ToInt(size) * (cast.ToInt(current) - 1))
 				delete(cond, "current")
 			}
-			db = db.Where(cond)
+			var keys []string
+			var values []any
+			for k, v := range cond {
+				value, ok := v.(string)
+				if ok {
+					if value != "" {
+						keys = append(keys, fmt.Sprintf("%s like ?", k))
+						values = append(values, fmt.Sprintf("%%%s%%", v))
+					}
+					delete(cond, k)
+				}
+			}
+			if len(keys) > 0 {
+				db = db.Where(strings.Join(keys, " and "), values...)
+			}
 			index++
 		}
 		order, ok := conds[length-1].(string)
@@ -93,10 +87,23 @@ func (d *Dao[M]) Page(conds ...any) ([]M, int64, error) {
 			length--
 		}
 		if index < length {
-			db = db.Where(conds[index], conds[index+1:length]...).Count(&count)
+			db = db.Where(conds[index], conds[index+1:length]...)
 		}
 	}
-	err := db.Find(&ms).Limit(-1).Offset(-1).Count(&count).Error
+
+	return db
+}
+
+// 分页集合
+func (d *Dao[M]) Page(conds ...any) ([]M, int64, error) {
+	var ms []M
+	var count int64
+	db := d.Make(conds...).Find(&ms)
+	_, ok := db.Statement.Clauses["LIMIT"]
+	if ok {
+		db = db.Limit(-1).Offset(-1).Count(&count)
+	}
+	err := db.Error
 	if err != nil {
 		return ms, count, err
 	}
