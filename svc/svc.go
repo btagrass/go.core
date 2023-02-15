@@ -175,7 +175,7 @@ func (s *Svc[M]) ListAndCache(expiration time.Duration, conds ...any) ([]M, erro
 		ms = v.([]M)
 	} else {
 		var err error
-		ms, err = s.List(conds)
+		ms, _, err = s.List(conds)
 		if err != nil {
 			return ms, err
 		}
@@ -210,7 +210,7 @@ func (s *Svc[M]) ListAndRedis(expiration time.Duration, conds ...any) ([]M, erro
 	key := fmt.Sprintf("%s:%v", s.Prefix, conds)
 	err := s.Redis.Get(context.Background(), key).Scan(&ms)
 	if err != nil {
-		ms, err = s.List(conds)
+		ms, _, err = s.List(conds)
 		if err != nil {
 			return ms, err
 		}

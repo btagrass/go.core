@@ -30,7 +30,7 @@ func (m *Mdl) MarshalBinary() ([]byte, error) {
 }
 
 func (m *Mdl) UnmarshalBinary(data []byte) error {
-	return json.Unmarshal(data, m)
+	return json.Unmarshal(data, &m)
 }
 
 func (m *Mdl) ToString() string {

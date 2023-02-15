@@ -101,7 +101,7 @@ func (s *ResourceSvc) ListResources(conds map[string]any) ([]mdl.Resource, error
 	return resources, nil
 }
 
-// 分页资源集合
+// 获取资源集合
 func (s *ResourceSvc) PageResources(conds map[string]any) ([]mdl.Resource, int64, error) {
 	var resources []mdl.Resource
 	var count int64

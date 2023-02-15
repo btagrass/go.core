@@ -51,6 +51,27 @@ func NewUserSvc() *UserSvc {
 	return s
 }
 
+// 获取用户集合
+func (s *UserSvc) ListUsers(conds map[string]any) ([]mdl.User, int64, error) {
+	var users []mdl.User
+	var count int64
+	current := cast.ToInt(conds["current"])
+	size := cast.ToInt(conds["size"])
+	delete(conds, "current")
+	delete(conds, "size")
+	err := s.Db.
+		Joins("Dept").
+		Limit(size).
+		Offset(size*(current-1)).
+		Find(&users, conds).
+		Count(&count).Error
+	if err != nil {
+		return users, count, err
+	}
+
+	return users, count, nil
+}
+
 // 获取用户角色集合
 func (s *UserSvc) ListUserRoles(id string) ([]int64, error) {
 	roles := []int64{}
@@ -91,27 +112,6 @@ func (s *UserSvc) Login(userName, password string) (*mdl.User, error) {
 	user.Token, _ = token.SignedString(s.SignedKey)
 
 	return user, nil
-}
-
-// 分页用户集合
-func (s *UserSvc) PageUsers(conds map[string]any) ([]mdl.User, int64, error) {
-	var users []mdl.User
-	var count int64
-	current := cast.ToInt(conds["current"])
-	size := cast.ToInt(conds["size"])
-	delete(conds, "current")
-	delete(conds, "size")
-	err := s.Db.
-		Joins("Dept").
-		Limit(size).
-		Offset(size*(current-1)).
-		Find(&users, conds).
-		Count(&count).Error
-	if err != nil {
-		return users, count, err
-	}
-
-	return users, count, nil
 }
 
 // 移除用户集合

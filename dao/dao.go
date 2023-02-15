@@ -40,10 +40,20 @@ func (d *Dao[M]) Get(conds ...any) (*M, error) {
 }
 
 // 获取集合
-func (d *Dao[M]) List(conds ...any) ([]M, error) {
-	ms, _, err := d.Page(conds...)
+func (d *Dao[M]) List(conds ...any) ([]M, int64, error) {
+	var ms []M
+	var count int64
+	db := d.Make(conds...).Find(&ms)
+	_, ok := db.Statement.Clauses["LIMIT"]
+	if ok {
+		db = db.Limit(-1).Offset(-1).Count(&count)
+	}
+	err := db.Error
+	if err != nil {
+		return ms, count, err
+	}
 
-	return ms, err
+	return ms, count, nil
 }
 
 // 组装
@@ -92,23 +102,6 @@ func (d *Dao[M]) Make(conds ...any) *gorm.DB {
 	}
 
 	return db
-}
-
-// 分页集合
-func (d *Dao[M]) Page(conds ...any) ([]M, int64, error) {
-	var ms []M
-	var count int64
-	db := d.Make(conds...).Find(&ms)
-	_, ok := db.Statement.Clauses["LIMIT"]
-	if ok {
-		db = db.Limit(-1).Offset(-1).Count(&count)
-	}
-	err := db.Error
-	if err != nil {
-		return ms, count, err
-	}
-
-	return ms, count, nil
 }
 
 // 移除
