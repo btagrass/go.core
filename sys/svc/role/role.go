@@ -22,9 +22,9 @@ func NewRoleSvc(userSvc *user.UserSvc) *RoleSvc {
 }
 
 // 获取角色资源集合
-func (s *RoleSvc) ListRoleResources(id int64) ([]int64, error) {
+func (s *RoleSvc) ListRoleResources(id string) ([]int64, error) {
 	var resources []int64
-	permissions := s.userSvc.Perm.GetPermissionsForUser(cast.ToString(id))
+	permissions := s.userSvc.Perm.GetPermissionsForUser(id)
 	for _, p := range permissions {
 		resources = append(resources, cast.ToInt64(p[3]))
 	}
@@ -33,21 +33,20 @@ func (s *RoleSvc) ListRoleResources(id int64) ([]int64, error) {
 }
 
 // 保存角色资源集合
-func (s *RoleSvc) SaveRoleResources(id int64, resources []mdl.Resource) error {
-	_, err := s.userSvc.Perm.DeletePermissionsForUser(cast.ToString(id))
+func (s *RoleSvc) SaveRoleResources(id string, resources []mdl.Resource) error {
+	_, err := s.userSvc.Perm.DeletePermissionsForUser(id)
 	if err != nil {
 		return err
 	}
 	var rs [][]string
-	for _, res := range resources {
+	for _, r := range resources {
 		rs = append(rs, []string{
-			res.Url,
-			res.Act,
-			cast.ToString(res.Id),
-			cast.ToString(res.Type),
+			r.Url,
+			r.Act,
+			cast.ToString(r.Id),
 		})
 	}
-	_, err = s.userSvc.Perm.AddPermissionsForUser(cast.ToString(id), rs...)
+	_, err = s.userSvc.Perm.AddPermissionsForUser(id, rs...)
 	if err != nil {
 		return err
 	}

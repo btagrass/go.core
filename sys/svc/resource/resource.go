@@ -4,7 +4,6 @@ import (
 	"github.com/btagrass/go.core/svc"
 	"github.com/btagrass/go.core/sys/mdl"
 	"github.com/btagrass/go.core/sys/svc/user"
-	"github.com/spf13/cast"
 	"gorm.io/gorm"
 )
 
@@ -33,16 +32,17 @@ func (s *ResourceSvc) ListMenus(userId string) ([]mdl.Resource, error) {
 			Preload("Children.Children", func(db *gorm.DB) *gorm.DB {
 				return db.Order("sequence")
 			}).
+			Where("parent_id = 0 and type = 1").
 			Order("sequence").
-			Find(&resources, "parent_id = 0 and type = 1").Error
+			Find(&resources).Error
 		if err != nil {
 			return resources, err
 		}
 	} else {
 		var ids []string
-		roles, _ := s.userSvc.Perm.GetRolesForUser(cast.ToString(userId))
-		for _, role := range roles {
-			permissions := s.userSvc.Perm.GetPermissionsForUser(role)
+		roles, _ := s.userSvc.Perm.GetRolesForUser(userId)
+		for _, r := range roles {
+			permissions := s.userSvc.Perm.GetPermissionsForUser(r)
 			for _, p := range permissions {
 				ids = append(ids, p[3])
 			}
@@ -51,8 +51,12 @@ func (s *ResourceSvc) ListMenus(userId string) ([]mdl.Resource, error) {
 			Preload("Children", func(db *gorm.DB) *gorm.DB {
 				return db.Where("id in ?", ids).Order("sequence")
 			}).
-			Find(&resources, "parent_id = 0 and type = 1 and id in ?", ids).
-			Order("sequence").Error
+			Preload("Children.Children", func(db *gorm.DB) *gorm.DB {
+				return db.Where("id in ?", ids).Order("sequence")
+			}).
+			Where("parent_id = 0 and type = 1 and id in ?", ids).
+			Order("sequence").
+			Find(&resources).Error
 		if err != nil {
 			return resources, err
 		}
@@ -62,63 +66,25 @@ func (s *ResourceSvc) ListMenus(userId string) ([]mdl.Resource, error) {
 }
 
 // 获取资源集合
-func (s *ResourceSvc) ListResources(conds map[string]any) ([]mdl.Resource, error) {
-	var resources []mdl.Resource
-	user, ok := conds["user"]
-	if ok {
-		delete(conds, "user")
-		var resourceIds []int64
-		roles, _ := s.userSvc.Perm.GetRolesForUser(cast.ToString(user))
-		for _, role := range roles {
-			permissions := s.userSvc.Perm.GetPermissionsForUser(role)
-			for _, p := range permissions {
-				resourceIds = append(resourceIds, cast.ToInt64(p[3]))
-			}
-		}
-		err := s.Db.
-			Preload("Children", func(db *gorm.DB) *gorm.DB {
-				return db.Where("id in ?", resourceIds).Order("sequence")
-			}).
-			Order("sequence").
-			Where("parent_id = 0 and id in ?", resourceIds).
-			Find(&resources, conds).Error
-		if err != nil {
-			return resources, err
-		}
-	} else {
-		err := s.Db.
-			Preload("Children", func(db *gorm.DB) *gorm.DB {
-				return db.Order("sequence")
-			}).
-			Order("sequence").
-			Where("parent_id = 0").
-			Find(&resources, conds).Error
-		if err != nil {
-			return resources, err
-		}
-	}
-
-	return resources, nil
-}
-
-// 获取资源集合
-func (s *ResourceSvc) PageResources(conds map[string]any) ([]mdl.Resource, int64, error) {
+func (s *ResourceSvc) ListResources(conds map[string]any) ([]mdl.Resource, int64, error) {
 	var resources []mdl.Resource
 	var count int64
-	current := cast.ToInt(conds["current"])
-	size := cast.ToInt(conds["size"])
-	delete(conds, "current")
-	delete(conds, "size")
-	err := s.Db.
+	db := s.
+		Make(conds).
 		Preload("Children", func(db *gorm.DB) *gorm.DB {
 			return db.Order("sequence")
 		}).
-		Limit(size).
-		Offset(size*(current-1)).
-		Order("sequence").
+		Preload("Children.Children", func(db *gorm.DB) *gorm.DB {
+			return db.Order("sequence")
+		}).
 		Where("parent_id = 0").
-		Find(&resources, conds).
-		Count(&count).Error
+		Order("sequence").
+		Find(&resources)
+	_, ok := db.Statement.Clauses["LIMIT"]
+	if ok {
+		db = db.Limit(-1).Offset(-1).Count(&count)
+	}
+	err := db.Error
 	if err != nil {
 		return resources, count, err
 	}

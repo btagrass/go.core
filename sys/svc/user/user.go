@@ -29,11 +29,11 @@ func NewUserSvc() *UserSvc {
 		SignedKey: []byte("kskj"),
 	}
 	model := model.NewModel()
-	model.AddDef("r", "r", "sub, obj, act")
-	model.AddDef("p", "p", "sub, obj, act, id, type")
-	model.AddDef("g", "g", "_, _")
-	model.AddDef("e", "e", "some(where (p.eft == allow))")
-	model.AddDef("m", "m", "r.sub == '300000000000001' || regexMatch(r.obj, '/sys/resources/menu') || g(r.sub, p.sub) && regexMatch(r.obj, p.obj) && regexMatch(r.act, p.act) && p.type == '2'")
+	model.AddDef("r", "r", "sub, obj, act")                                                                                                                   // 请求（sub：用户编码，obj：请求路径，act：方法）
+	model.AddDef("p", "p", "sub, obj, act, res")                                                                                                              // 角色资源（sub：角色编码，obj：请求路径，act：方法，id：资源编码，type：资源类型）
+	model.AddDef("g", "g", "_, _")                                                                                                                            // 用户角色（_：用户编码，_：角色编码）
+	model.AddDef("e", "e", "some(where (p.eft == allow))")                                                                                                    // 策略
+	model.AddDef("m", "m", "r.sub == '300000000000001' || r.obj == '/mgt/sys/resources/menu' || g(r.sub, p.sub) && keyMatch(r.obj, p.obj) && r.act == p.act") // 匹配
 	adapter, err := gormadapter.NewAdapterByDB(s.Db)
 	if err != nil {
 		logrus.Fatal(err)
@@ -55,16 +55,12 @@ func NewUserSvc() *UserSvc {
 func (s *UserSvc) ListUsers(conds map[string]any) ([]mdl.User, int64, error) {
 	var users []mdl.User
 	var count int64
-	current := cast.ToInt(conds["current"])
-	size := cast.ToInt(conds["size"])
-	delete(conds, "current")
-	delete(conds, "size")
-	err := s.Db.
-		Joins("Dept").
-		Limit(size).
-		Offset(size*(current-1)).
-		Find(&users, conds).
-		Count(&count).Error
+	db := s.Make(conds).Joins("Dept").Find(&users)
+	_, ok := db.Statement.Clauses["LIMIT"]
+	if ok {
+		db = db.Limit(-1).Offset(-1).Count(&count)
+	}
+	err := db.Error
 	if err != nil {
 		return users, count, err
 	}
@@ -116,7 +112,7 @@ func (s *UserSvc) Login(userName, password string) (*mdl.User, error) {
 
 // 移除用户集合
 func (s *UserSvc) RemoveUsers(ids []string) error {
-	return s.Remove("id != 300000000000001 and id in ?", ids)
+	return s.Remove(ids, "id != 300000000000001")
 }
 
 // 保存用户角色集合
@@ -139,7 +135,7 @@ func (s *UserSvc) SaveUserRoles(id string, roles []int64) error {
 	if err != nil {
 		return err
 	}
-	_, err = s.Perm.AddRolesForUser(cast.ToString(id), cast.ToStringSlice(roles))
+	_, err = s.Perm.AddRolesForUser(id, cast.ToStringSlice(roles))
 
 	return err
 }
