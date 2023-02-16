@@ -3,7 +3,7 @@ module github.com/btagrass/go.core
 go 1.20
 
 require (
-	github.com/casbin/casbin/v2 v2.62.0
+	github.com/casbin/casbin/v2 v2.63.0
 	github.com/casbin/gorm-adapter/v3 v3.14.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/pprof v1.4.0
@@ -30,7 +30,7 @@ require (
 require (
 	github.com/Knetic/govaluate v3.0.1-0.20171022003610-9aa49832a739+incompatible // indirect
 	github.com/KyleBanks/depth v1.2.1 // indirect
-	github.com/aws/aws-sdk-go v1.44.201 // indirect
+	github.com/aws/aws-sdk-go v1.44.202 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/dustin/go-humanize v1.0.1 // indirect

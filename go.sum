@@ -54,11 +54,11 @@ github.com/PuerkitoBio/purell v1.1.1/go.mod h1:c11w/QuzBsJSee3cPx9rAFu61PvFxuPbt
 github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578/go.mod h1:uGdkoq3SwY9Y+13GIhn11/XLaGBb4BfwItxLd5jeuXE=
 github.com/agiledragon/gomonkey/v2 v2.3.1/go.mod h1:ap1AmDzcVOAz1YpeJ3TCzIgstoaWLA6jbbgxfB4w2iY=
 github.com/aws/aws-sdk-go v1.38.20/go.mod h1:hcU610XS61/+aQV88ixoOzUoG7v3b31pl2zKMmprdro=
-github.com/aws/aws-sdk-go v1.44.201 h1:gKtyFyiVGh/uTW7sCQaoyU6XCUsnI8+WWKmbEaABCfw=
-github.com/aws/aws-sdk-go v1.44.201/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
+github.com/aws/aws-sdk-go v1.44.202 h1:nk/DtYoAS7zX4SbfiQEJO+C0GBN8ZxXrkD+BozwLvZk=
+github.com/aws/aws-sdk-go v1.44.202/go.mod h1:aVsgQcEevwlmQ7qHE9I3h+dtQgpqhFB+i8Phjh7fkwI=
 github.com/casbin/casbin/v2 v2.55.1/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRtgrQfcJqHg=
-github.com/casbin/casbin/v2 v2.62.0 h1:PP0TfRypRbjMRZtZSHchhaWO54UULjrDD1iYv5sRxqk=
-github.com/casbin/casbin/v2 v2.62.0/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRtgrQfcJqHg=
+github.com/casbin/casbin/v2 v2.63.0 h1:+xd5gRceCk+IGzIJgUSZQtypZuOzZDHgHvU0FlmBCVA=
+github.com/casbin/casbin/v2 v2.63.0/go.mod h1:vByNa/Fchek0KZUgG5wEsl7iFsiviAYKRtgrQfcJqHg=
 github.com/casbin/gorm-adapter/v3 v3.14.0 h1:zZ6AIiNHJZ3ntdf5RBrqD+0Cb4UO+uKFk79R9yJ7mpw=
 github.com/casbin/gorm-adapter/v3 v3.14.0/go.mod h1:jqaf4bUITbCyMPUellaTd8IQJ77JfVAbe77gZZnx98w=
 github.com/census-instrumentation/opencensus-proto v0.2.1/go.mod h1:f6KPmirojxKA12rnyqOA5BBL4O983OfeGPqjHWSTneU=
