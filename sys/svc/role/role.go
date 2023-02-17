@@ -41,7 +41,7 @@ func (s *RoleSvc) SaveRoleResources(id string, resources []mdl.Resource) error {
 	var rs [][]string
 	for _, r := range resources {
 		rs = append(rs, []string{
-			r.Url,
+			r.Uri,
 			r.Act,
 			cast.ToString(r.Id),
 		})
