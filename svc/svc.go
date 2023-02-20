@@ -20,7 +20,6 @@ import (
 	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
-	"github.com/yitter/idgenerator-go/idgen"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -91,15 +90,13 @@ func init() {
 		if err != nil {
 			logrus.Fatal(err)
 		}
-		workerId := uint16(time.Now().Unix() % 64)
-		idgen.SetIdGenerator(idgen.NewIdGeneratorOptions(workerId))
 		err = db.Callback().Create().Before("gorm:create").Register("gorm:id", func(d *gorm.DB) {
 			if d.Statement.Schema != nil {
 				id := d.Statement.Schema.LookUpField("Id")
 				if id != nil {
 					_, zero := id.ValueOf(d.Statement.Context, d.Statement.ReflectValue)
 					if zero {
-						err = id.Set(d.Statement.Context, d.Statement.ReflectValue, idgen.NextId())
+						err = id.Set(d.Statement.Context, d.Statement.ReflectValue, utl.IntId())
 					}
 				}
 			}

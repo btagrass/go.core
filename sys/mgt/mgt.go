@@ -70,16 +70,18 @@ func Mgt() *gin.Engine {
 	// 系统
 	s := m.Group("/sys").Use(cmw.Auth(svc.UserSvc.Perm, svc.UserSvc.SignedKey))
 	{
-		// 字典
-		s.GET("/dicts/:id", GetDict)
-		s.GET("/dicts", ListDicts)
-		s.DELETE("/dicts/:ids", RemoveDicts)
-		s.POST("/dicts", SaveDict)
 		// 部门
 		s.GET("/depts/:id", GetDept)
 		s.GET("/depts", ListDepts)
 		s.DELETE("/depts/:ids", RemoveDepts)
 		s.POST("/depts", SaveDept)
+		// 字典
+		s.GET("/dicts/:id", GetDict)
+		s.GET("/dicts", ListDicts)
+		s.DELETE("/dicts/:ids", RemoveDicts)
+		s.POST("/dicts", SaveDict)
+		// 文件
+		s.POST("/files/:dir", SaveFile)
 		// 资源
 		s.GET("/resources/:id", func(c *gin.Context) {
 			if c.Param("id") == "menu" {

@@ -142,8 +142,8 @@ func (d *Dao[M]) Trans(funcs ...func(tx *gorm.DB) error) error {
 }
 
 // 更新
-func (d *Dao[M]) Update(m M, values map[string]any) error {
-	err := d.Db.Model(&m).Updates(values).Error
+func (d *Dao[M]) Update(values map[string]any, conds ...any) error {
+	err := d.Make(conds...).Model(new(M)).Updates(values).Error
 
 	return err
 }
