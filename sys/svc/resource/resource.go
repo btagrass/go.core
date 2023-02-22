@@ -27,10 +27,10 @@ func (s *ResourceSvc) ListMenus(userId string) ([]mdl.Resource, error) {
 	if userId == "300000000000001" {
 		err := s.Db.
 			Preload("Children", func(db *gorm.DB) *gorm.DB {
-				return db.Order("sequence")
+				return db.Where("type = 1").Order("sequence")
 			}).
 			Preload("Children.Children", func(db *gorm.DB) *gorm.DB {
-				return db.Order("sequence")
+				return db.Where("type = 1").Order("sequence")
 			}).
 			Where("parent_id = 0 and type = 1").
 			Order("sequence").
@@ -54,7 +54,7 @@ func (s *ResourceSvc) ListMenus(userId string) ([]mdl.Resource, error) {
 			Preload("Children.Children", func(db *gorm.DB) *gorm.DB {
 				return db.Where("id in ?", ids).Order("sequence")
 			}).
-			Where("parent_id = 0 and type = 1 and id in ?", ids).
+			Where("parent_id = 0 and id in ?", ids).
 			Order("sequence").
 			Find(&resources).Error
 		if err != nil {
