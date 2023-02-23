@@ -7,15 +7,12 @@ import (
 	"io"
 	"log"
 	"os"
-	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/btagrass/go.core/app"
 	"github.com/btagrass/go.core/dao"
 	"github.com/btagrass/go.core/mdl"
 	"github.com/btagrass/go.core/utl"
-	"github.com/glebarez/sqlite"
 	"github.com/go-redis/redis/v8"
 	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
@@ -45,21 +42,16 @@ func init() {
 		})
 	}
 	// 数据库
-	dsn := viper.GetString("dsn")
-	if dsn != "" {
+	name := viper.GetString("dsn.name")
+	if name != "" {
 		var err error
 		var dialector gorm.Dialector
-		if strings.HasSuffix(dsn, ".db") {
-			err = utl.MakeDir(filepath.Dir(dsn))
-			if err != nil {
-				logrus.Fatal(err)
-			}
-			dialector = sqlite.Open(dsn)
-		} else if strings.HasSuffix(dsn, "&parseTime=True&loc=Local") {
-			dsns := utl.Split(dsn, '/', '?')
-			if len(dsns) == 3 {
-				databaseName := dsns[1]
-				dataSourceName := utl.Replace(dsn, databaseName, "information_schema")
+		typ := viper.GetString("dsn.type")
+		if typ == "" || typ == "mysql" {
+			names := utl.Split(name, '/', '?')
+			if len(names) == 3 {
+				databaseName := names[1]
+				dataSourceName := utl.Replace(name, databaseName, "information_schema")
 				database, err := sql.Open("mysql", dataSourceName)
 				if err != nil {
 					logrus.Fatal(err)
@@ -70,7 +62,7 @@ func init() {
 					logrus.Fatal(err)
 				}
 			}
-			dialector = mysql.Open(dsn)
+			dialector = mysql.Open(name)
 		}
 		db, err = gorm.Open(dialector, &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{
