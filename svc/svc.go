@@ -7,12 +7,14 @@ import (
 	"io"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 
 	"github.com/btagrass/go.core/app"
 	"github.com/btagrass/go.core/dao"
 	"github.com/btagrass/go.core/mdl"
 	"github.com/btagrass/go.core/utl"
+	"github.com/glebarez/sqlite"
 	"github.com/go-redis/redis/v8"
 	"github.com/patrickmn/go-cache"
 	"github.com/sirupsen/logrus"
@@ -63,6 +65,12 @@ func init() {
 				}
 			}
 			dialector = mysql.Open(name)
+		} else if typ == "sqlite" {
+			err = utl.MakeDir(filepath.Dir(name))
+			if err != nil {
+				logrus.Fatal(err)
+			}
+			dialector = sqlite.Open(name)
 		}
 		db, err = gorm.Open(dialector, &gorm.Config{
 			NamingStrategy: schema.NamingStrategy{

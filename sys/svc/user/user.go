@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"time"
 
-	sqladapter "github.com/Blank-Xu/sql-adapter"
 	"github.com/btagrass/go.core/svc"
 	"github.com/btagrass/go.core/sys/mdl"
 	"github.com/casbin/casbin/v2"
 	"github.com/casbin/casbin/v2/model"
+	gormadapter "github.com/casbin/gorm-adapter/v3"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/cast"
@@ -34,11 +34,7 @@ func NewUserSvc() *UserSvc {
 	model.AddDef("g", "g", "_, _")                                                                                                                            // 用户角色（_：用户编码，_：角色编码）
 	model.AddDef("e", "e", "some(where (p.eft == allow))")                                                                                                    // 策略
 	model.AddDef("m", "m", "r.sub == '300000000000001' || r.obj == '/mgt/sys/resources/menu' || g(r.sub, p.sub) && keyMatch(r.obj, p.obj) && r.act == p.act") // 匹配
-	database, err := s.Db.DB()
-	if err != nil {
-		logrus.Fatal(err)
-	}
-	adapter, err := sqladapter.NewAdapter(database, s.Db.Name(), "sys_rule")
+	adapter, err := gormadapter.NewAdapterByDBUseTableName(s.Db, "sys", "rule")
 	if err != nil {
 		logrus.Fatal(err)
 	}
