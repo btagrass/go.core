@@ -23,7 +23,7 @@ func NewRoleSvc(userSvc *user.UserSvc) *RoleSvc {
 
 // 获取角色资源集合
 func (s *RoleSvc) ListRoleResources(id string) ([]int64, error) {
-	var resources []int64
+	resources := make([]int64, 0)
 	permissions := s.userSvc.Perm.GetPermissionsForUser(id)
 	for _, p := range permissions {
 		resources = append(resources, cast.ToInt64(p[3]))
