@@ -36,6 +36,25 @@ func init() {
 	}
 }
 
+// 删除
+func Delete(url string, r ...any) (string, error) {
+	req := resty.New().
+		SetTimeout(Timeout).
+		SetTLSClientConfig(&tls.Config{
+			InsecureSkipVerify: true,
+		}).
+		OnAfterResponse(respond).
+		R().
+		ForceContentType("application/json")
+	if len(r) > 0 {
+		req.SetResult(r[0])
+	}
+	resp, err := req.Delete(GetUrl(url))
+	logrus.Debugf("method: %s, url: %s -> %s", req.Method, req.URL, resp)
+
+	return resp.String(), err
+}
+
 // 获取
 func Get(url string, r ...any) (string, error) {
 	req := resty.New().
@@ -125,6 +144,28 @@ func PostForm(url string, data map[string]string, r ...any) (string, error) {
 		req.SetResult(r[0])
 	}
 	resp, err := req.Post(GetUrl(url))
+	logrus.Debugf("method: %s, url: %s, data: %s -> %s", req.Method, req.URL, data, resp)
+
+	return resp.String(), err
+}
+
+// 提交
+func Put(url string, data any, r ...any) (string, error) {
+	req := resty.New().
+		SetTimeout(Timeout).
+		SetTLSClientConfig(&tls.Config{
+			InsecureSkipVerify: true,
+		}).
+		OnAfterResponse(respond).
+		R().
+		SetHeader("Accept", "*/*").
+		SetHeader("Content-Type", "application/json").
+		SetBody(data).
+		ForceContentType("application/json")
+	if len(r) > 0 {
+		req.SetResult(r[0])
+	}
+	resp, err := req.Put(GetUrl(url))
 	logrus.Debugf("method: %s, url: %s, data: %s -> %s", req.Method, req.URL, data, resp)
 
 	return resp.String(), err
