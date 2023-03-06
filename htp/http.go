@@ -37,7 +37,7 @@ func init() {
 }
 
 // 删除
-func Delete(url string, r ...any) (string, error) {
+func Delete(url string, r ...any) (*http.Response, error) {
 	req := resty.New().
 		SetTimeout(Timeout).
 		SetTLSClientConfig(&tls.Config{
@@ -52,11 +52,11 @@ func Delete(url string, r ...any) (string, error) {
 	resp, err := req.Delete(GetUrl(url))
 	logrus.Debugf("method: %s, url: %s -> %s", req.Method, req.URL, resp)
 
-	return resp.String(), err
+	return resp.RawResponse, err
 }
 
 // 获取
-func Get(url string, r ...any) (string, error) {
+func Get(url string, r ...any) (*http.Response, error) {
 	req := resty.New().
 		SetTimeout(Timeout).
 		SetTLSClientConfig(&tls.Config{
@@ -71,7 +71,7 @@ func Get(url string, r ...any) (string, error) {
 	resp, err := req.Get(GetUrl(url))
 	logrus.Debugf("method: %s, url: %s -> %s", req.Method, req.URL, resp)
 
-	return resp.String(), err
+	return resp.RawResponse, err
 }
 
 // 获取网址
@@ -87,7 +87,7 @@ func GetUrl(url string) string {
 }
 
 // 提交
-func Post(url string, data any, r ...any) (string, error) {
+func Post(url string, data any, r ...any) (*http.Response, error) {
 	req := resty.New().
 		SetTimeout(Timeout).
 		SetTLSClientConfig(&tls.Config{
@@ -105,11 +105,11 @@ func Post(url string, data any, r ...any) (string, error) {
 	resp, err := req.Post(GetUrl(url))
 	logrus.Debugf("method: %s, url: %s, data: %s -> %s", req.Method, req.URL, data, resp)
 
-	return resp.String(), err
+	return resp.RawResponse, err
 }
 
 // 提交文件
-func PostFile(url string, data map[string]string, r ...any) error {
+func PostFile(url string, data map[string]string, r ...any) (*http.Response, error) {
 	req := resty.New().
 		SetTLSClientConfig(&tls.Config{
 			InsecureSkipVerify: true,
@@ -124,11 +124,11 @@ func PostFile(url string, data map[string]string, r ...any) error {
 	resp, err := req.Post(GetUrl(url))
 	logrus.Debugf("method: %s, url: %s, data: %s -> %s", req.Method, req.URL, data, resp)
 
-	return err
+	return resp.RawResponse, err
 }
 
 // 提交表单
-func PostForm(url string, data map[string]string, r ...any) (string, error) {
+func PostForm(url string, data map[string]string, r ...any) (*http.Response, error) {
 	req := resty.New().
 		SetTimeout(Timeout).
 		SetTLSClientConfig(&tls.Config{
@@ -146,11 +146,11 @@ func PostForm(url string, data map[string]string, r ...any) (string, error) {
 	resp, err := req.Post(GetUrl(url))
 	logrus.Debugf("method: %s, url: %s, data: %s -> %s", req.Method, req.URL, data, resp)
 
-	return resp.String(), err
+	return resp.RawResponse, err
 }
 
 // 提交
-func Put(url string, data any, r ...any) (string, error) {
+func Put(url string, data any, r ...any) (*http.Response, error) {
 	req := resty.New().
 		SetTimeout(Timeout).
 		SetTLSClientConfig(&tls.Config{
@@ -168,11 +168,11 @@ func Put(url string, data any, r ...any) (string, error) {
 	resp, err := req.Put(GetUrl(url))
 	logrus.Debugf("method: %s, url: %s, data: %s -> %s", req.Method, req.URL, data, resp)
 
-	return resp.String(), err
+	return resp.RawResponse, err
 }
 
 // 保存文件
-func SaveFile(url string, file ...string) error {
+func SaveFile(url string, file ...string) (*http.Response, error) {
 	filePath := filepath.Base(url)
 	if len(file) > 0 {
 		filePath = file[0]
@@ -187,7 +187,7 @@ func SaveFile(url string, file ...string) error {
 	resp, err := req.Get(GetUrl(url))
 	logrus.Debugf("method: %s, url: %s -> %s", req.Method, req.URL, resp)
 
-	return err
+	return resp.RawResponse, err
 }
 
 // 响应
