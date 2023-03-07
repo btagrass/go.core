@@ -200,15 +200,16 @@ func respond(c *resty.Client, resp *resty.Response) error {
 		if !ok {
 			code, ok = r["error_code"]
 		}
-		if ok {
-			code = cast.ToInt(code)
-			if code != 0 && code != http.StatusOK {
-				msg, ok := r["msg"]
-				if !ok {
-					msg = r["desp"]
-				}
-				return fmt.Errorf(cast.ToString(msg))
+		if !ok {
+			return fmt.Errorf("应用接口代码不存在")
+		}
+		code = cast.ToInt(code)
+		if code != http.StatusOK && code != 0 {
+			msg, ok := r["msg"]
+			if !ok {
+				msg = r["desp"]
 			}
+			return fmt.Errorf("应用接口调用异常 %s -> %d", msg, code)
 		}
 	}
 
