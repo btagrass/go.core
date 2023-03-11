@@ -6,7 +6,7 @@
 |cmd|命令行|安装，卸载，启动，结束，状态|
 |cmw|通用中间件|认证（Gin+Jwt+Casbin）|
 |dao|泛型数据访问对象|获取，获取集合（列表），移除，保存，更新，事务|
-|htp|超文本传输协议|Get，Post，PostFile，PostForm，SaveFile|
+|htp|超文本传输协议|Delete，Get，Post，PostFile，PostForm，Put，SaveFile|
 |mdl|泛型模型|模型接口，模型类|
 |ntp|网络传输协议|UDP|
 |r|请求结果|查询（query转map），输出Json|
