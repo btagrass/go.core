@@ -49,7 +49,10 @@ func init() {
 		var err error
 		var dialector gorm.Dialector
 		typ := viper.GetString("dsn.type")
-		if typ == "" || typ == "mysql" {
+		if typ == "" {
+			typ = "mysql"
+		}
+		if typ == "mysql" {
 			names := utl.Split(name, '/', '?')
 			if len(names) == 3 {
 				databaseName := names[1]
@@ -90,6 +93,12 @@ func init() {
 		if err != nil {
 			logrus.Fatal(err)
 		}
+		if typ == "sqlite" {
+			err = db.Exec("PRAGMA journal_mode=WAL;").Error
+			if err != nil {
+				logrus.Fatal(err)
+			}
+		}
 		err = db.Callback().Create().Before("gorm:create").Register("gorm:id", func(d *gorm.DB) {
 			if d.Statement.Schema != nil {
 				id := d.Statement.Schema.LookUpField("Id")
@@ -104,6 +113,13 @@ func init() {
 		if err != nil {
 			logrus.Fatal(err)
 		}
+		sqlDb, err := db.DB()
+		if err != nil {
+			logrus.Fatal(err)
+		}
+		sqlDb.SetMaxIdleConns(viper.GetInt("dsn.maxIdleConns"))
+		sqlDb.SetMaxOpenConns(viper.GetInt("dsn.maxOpenConns"))
+		sqlDb.SetConnMaxLifetime(viper.GetDuration("dsn.maxLifetime"))
 	}
 }
 
