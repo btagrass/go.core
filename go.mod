@@ -3,8 +3,8 @@ module github.com/btagrass/go.core
 go 1.20
 
 require (
-	github.com/casbin/casbin/v2 v2.65.1
-	github.com/casbin/gorm-adapter/v3 v3.14.0
+	github.com/casbin/casbin/v2 v2.65.2
+	github.com/casbin/gorm-adapter/v3 v3.15.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-contrib/pprof v1.4.0
 	github.com/gin-gonic/gin v1.9.0
